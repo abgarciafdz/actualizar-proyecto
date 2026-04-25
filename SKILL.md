@@ -76,20 +76,51 @@ Revisar la conversación para identificar:
 
 ## Paso 3: Actualizar cada archivo
 
-### CLAUDE.md global
-Solo si cambió algo que afecte las instrucciones generales:
-- Nombre del proyecto
-- Ubicación/ruta del proyecto
-- Descripción general de la herramienta
-- Skills o comandos nuevos
+### Filosofía: global = índice, proyecto = detalles
 
-### CLAUDE.md del proyecto
+El CLAUDE.md global se carga en **todas** las sesiones — debe mantenerse **mínimo**. El CLAUDE.md del proyecto solo se carga al trabajar en esa carpeta — ahí viven los detalles.
+
+**Regla de oro:** Si existe `projects/{proyecto}/CLAUDE.md`, toda información específica de ese proyecto va ahí. El global solo contiene el link.
+
+### CLAUDE.md del proyecto (destino por defecto de casi todo)
 Actualizar secciones relevantes:
 - Nombre y descripción
 - Estructura de archivos (si se agregaron/removieron)
 - Convenciones de código o diseño
 - Roadmap / pendientes
 - Decisiones técnicas o de UX
+- Detalles de features, estrategias, configuración específica
+- Archivos relevantes con hipervínculo markdown
+
+**Si el CLAUDE.md del proyecto no existe y el proyecto tiene suficiente complejidad (>3 archivos relevantes, ≥1 decisión de diseño, o flujo de ejecución propio): créalo.** Ese es el destino correcto para la información detallada.
+
+### CLAUDE.md global (actualizar solo en casos muy acotados)
+
+**SOLO actualizar el global si:**
+- Se creó un proyecto nuevo → agregar 1 línea en la lista "Proyectos activos" con link a su carpeta
+- Se creó un skill/comando nuevo instalado globalmente → agregar 1 línea en "Skills principales"
+- Se agregó una herramienta MCP nueva → agregar 1 línea en "Herramientas MCP"
+- Cambió una regla universal de comunicación → actualizar/agregar punto en "Cómo debe responder Claude"
+- Cambió el perfil de Abraham o contexto de Lagersoft (muy raro)
+
+**NO actualizar el global con:**
+- ❌ Detalles de features de un proyecto (va al CLAUDE.md del proyecto)
+- ❌ Archivos internos, rutas profundas, estructura de carpetas específica
+- ❌ Roadmap, pendientes, estado de implementación
+- ❌ Estrategias, configuración, parámetros técnicos
+- ❌ Cambios de UX/UI de un proyecto
+- ❌ Versiones de indicadores/scripts/scripts internos
+
+Si detectas que vas a añadir más de 2 líneas al global sobre un proyecto específico → **detente**: eso pertenece al CLAUDE.md del proyecto.
+
+### Tamaño objetivo del global
+
+Mantener **bajo 100 líneas**. Si supera este umbral:
+1. Identificar qué secciones tienen detalle de proyecto específico
+2. Mover ese contenido al `projects/{proyecto}/CLAUDE.md` correspondiente
+3. Dejar en el global solo 1 línea con link al proyecto
+
+Reportar al usuario si se realizó limpieza.
 
 ### Scripts y configs (condicional)
 Si se detectó cambio de nombre o ruta:
@@ -158,3 +189,13 @@ Mostrar al usuario:
 - Respetar nomenclatura: "CLAUDE.md global" = workspace, "CLAUDE.md del proyecto" = por proyecto
 - Preguntar si hay ambigüedad sobre qué proyecto actualizar
 - Al buscar rutas en scripts, usar grep sobre el directorio completo del proyecto — no asumir qué archivos tienen rutas
+
+### Regla crítica anti-saturación del global
+
+El global se carga en TODAS las sesiones. Cada línea innecesaria ahí cuesta tokens en cada conversación. Antes de escribir algo en el global, responder:
+
+1. ¿Esto aplica a **todos los proyectos**? → sí va al global
+2. ¿Esto solo aplica a **un proyecto específico**? → va al CLAUDE.md del proyecto
+3. Si la respuesta es "aplica a un proyecto pero quiero que se vea siempre" → sigue siendo específico del proyecto, **NO va al global**
+
+El criterio de "Abraham necesita verlo siempre" es casi siempre falso — cuando trabaje en ese proyecto, el CLAUDE.md del proyecto se carga automáticamente.
